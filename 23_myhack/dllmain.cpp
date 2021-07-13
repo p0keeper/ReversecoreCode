@@ -4,13 +4,15 @@
 
 #pragma comment(lib,"urlmon.lib")
 
-#define DEF_URL         (L"http://www.naver.com/index.html")
+#define DEF_URL         (L"http://192.168.10.11/index.html")
 #define DEF_FILE_NAME   (L"index.html")
 
 HMODULE g_hMod = NULL;
 
 DWORD WINAPI ThreadProc(LPVOID lParam)
 {
+    // TCHAR szPath[_MAX_PATH] = { 0, };
+    //这里书中用的_MAX_PATH在路径注入之后会导致堆栈异常，太短了，所以我直接修改为500
     TCHAR szPath[_MAX_PATH] = { 0, };
     if (!GetModuleFileName(g_hMod, szPath, MAX_PATH))
         return FALSE;

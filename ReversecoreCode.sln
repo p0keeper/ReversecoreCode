@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "23_myhack", "23_myhack\23_m
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "23_InjectDLL", "23_InjectDLL\23_InjectDLL.vcxproj", "{ADE3BDCD-887D-42A4-B0A8-62F80656D4F2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "24_EjectDLL", "24_EjectDLL\24_EjectDLL.vcxproj", "{3DF23A3F-B1F2-422A-9FD8-18BB8807C893}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -61,6 +63,14 @@ Global
 		{ADE3BDCD-887D-42A4-B0A8-62F80656D4F2}.Release|x64.Build.0 = Release|x64
 		{ADE3BDCD-887D-42A4-B0A8-62F80656D4F2}.Release|x86.ActiveCfg = Release|Win32
 		{ADE3BDCD-887D-42A4-B0A8-62F80656D4F2}.Release|x86.Build.0 = Release|Win32
+		{3DF23A3F-B1F2-422A-9FD8-18BB8807C893}.Debug|x64.ActiveCfg = Debug|x64
+		{3DF23A3F-B1F2-422A-9FD8-18BB8807C893}.Debug|x64.Build.0 = Debug|x64
+		{3DF23A3F-B1F2-422A-9FD8-18BB8807C893}.Debug|x86.ActiveCfg = Debug|Win32
+		{3DF23A3F-B1F2-422A-9FD8-18BB8807C893}.Debug|x86.Build.0 = Debug|Win32
+		{3DF23A3F-B1F2-422A-9FD8-18BB8807C893}.Release|x64.ActiveCfg = Release|x64
+		{3DF23A3F-B1F2-422A-9FD8-18BB8807C893}.Release|x64.Build.0 = Release|x64
+		{3DF23A3F-B1F2-422A-9FD8-18BB8807C893}.Release|x86.ActiveCfg = Release|Win32
+		{3DF23A3F-B1F2-422A-9FD8-18BB8807C893}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
