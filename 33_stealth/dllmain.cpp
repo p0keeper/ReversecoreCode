@@ -43,6 +43,7 @@ typedef NTSTATUS(WINAPI* PFZWQUERYSYSTEMINFORMATION)
 
 
 // global variable (in sharing memory)
+// 共享全局变量
 #pragma comment(linker, "/SECTION:.SHARE,RWS")
 #pragma data_seg(".SHARE")
 TCHAR g_szProcName[MAX_PATH] = { 0, };
@@ -51,7 +52,7 @@ TCHAR g_szProcName[MAX_PATH] = { 0, };
 // global variable
 BYTE g_pOrgBytes[5] = { 0, };
 
-
+// hook的过程就是把原函数的地址，替换为stealth中函数的过程
 BOOL hook_by_code(LPCSTR szDllName, LPCSTR szFuncName, PROC pfnNew, PBYTE pOrgBytes)
 {
     FARPROC pfnOrg;
@@ -59,19 +60,26 @@ BOOL hook_by_code(LPCSTR szDllName, LPCSTR szFuncName, PROC pfnNew, PBYTE pOrgBy
     BYTE pBuf[5] = { 0xE9, 0, };
     PBYTE pByte;
 
+    // 1、获取要hook的函数在dll中的地址
     pfnOrg = (FARPROC)GetProcAddress(GetModuleHandleA(szDllName), szFuncName);
     pByte = (PBYTE)pfnOrg;
 
+    // 2、判断起始地址是否为JMP指令，如果为JMP则已经被HOOK了
     if (pByte[0] == 0xE9)
         return FALSE;
-
+    // 3、修改内存保护属性
     VirtualProtect((LPVOID)pfnOrg, 5, PAGE_EXECUTE_READWRITE, &dwOldProtect);
 
+    // 4、备份原来的起始代码，复制到上面创建的共享节区
     memcpy(pOrgBytes, pfnOrg, 5);
 
+    // 5、这里的dwAddress指向的是伪造的函数的地址，相对距离计算公式
     dwAddress = (DWORD)pfnNew - (DWORD)pfnOrg - 5;
+
+    // 6、修改JMP之后的地址，组合成JMP dwAddress
     memcpy(&pBuf[1], &dwAddress, 4);
 
+    // 7、将老函数的前5个字节修改为JMP dwAddress
     memcpy(pfnOrg, pBuf, 5);
 
     VirtualProtect((LPVOID)pfnOrg, 5, dwOldProtect, &dwOldProtect);
@@ -79,7 +87,7 @@ BOOL hook_by_code(LPCSTR szDllName, LPCSTR szFuncName, PROC pfnNew, PBYTE pOrgBy
     return TRUE;
 }
 
-
+// 脱钩就是把起始指令修改为原来的
 BOOL unhook_by_code(LPCSTR szDllName, LPCSTR szFuncName, PBYTE pOrgBytes)
 {
     FARPROC pFunc;
@@ -113,6 +121,7 @@ NTSTATUS WINAPI NewZwQuerySystemInformation(
     PSYSTEM_PROCESS_INFORMATION pCur, pPrev;
     char szProcName[MAX_PATH] = { 0, };
 
+    // 停止HOOK
     unhook_by_code(DEF_NTDLL, DEF_ZWQUERYSYSTEMINFORMATION, g_pOrgBytes);
 
     pFunc = GetProcAddress(GetModuleHandleA(DEF_NTDLL),
@@ -165,7 +174,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
     char            szCurProc[MAX_PATH] = { 0, };
     char* p = NULL;
-
+    // 1、判断当前是否为hideProc.exe，如果是则终止，不进行hook
     GetModuleFileNameA(NULL, szCurProc, MAX_PATH);
     p = strrchr(szCurProc, '\\');
     if ((p != NULL) && !_stricmp(p + 1, "HideProc.exe"))
