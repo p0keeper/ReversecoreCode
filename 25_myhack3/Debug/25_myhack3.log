@@ -1,0 +1,3 @@
+﻿  pch.cpp
+  dllmain.cpp
+E:\2_技术笔记汇总\回炉重造\4二进制\ReversecoreCode\25_myhack3\dllmain.cpp(186,1): fatal error C1010: 在查找预编译头时遇到意外的文件结尾。是否忘记了向源中添加“#include "pch.h"”?

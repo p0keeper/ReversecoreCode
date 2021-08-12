@@ -6,10 +6,12 @@ BOOL InjectDll(DWORD dwPID, LPCTSTR szDllPath)
     HANDLE hProcess = NULL, hThread = NULL;
     HMODULE hMod = NULL;
     LPVOID pRemoteBuf = NULL;
-
-    //确定路径需要占用的缓冲区大小
     DWORD dwBufSize = (DWORD)(_tcslen(szDllPath) + 1) * sizeof(TCHAR);
     LPTHREAD_START_ROUTINE pThreadProc;
+    BOOL bRet = TRUE;
+
+    //确定路径需要占用的缓冲区大小
+    dwBufSize = (DWORD)(_tcslen(szDllPath) + 1) * sizeof(TCHAR);
 
     // #1. 使用OpenProcess函数获取目标进程句柄（PROCESS_ALL_ACCESS权限）
     if (!(hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPID)))
@@ -37,13 +39,25 @@ BOOL InjectDll(DWORD dwPID, LPCTSTR szDllPath)
       // pThreadProc = notepad.exe进程内存中的LoadLibraryW()地址
       // pRemoteBuf = notepad.exe进程内存中待加载注入dll的路径字符串的地址
     hThread = CreateRemoteThread(hProcess, NULL, 0, pThreadProc, pRemoteBuf, 0, NULL);
+    if (hThread == NULL)
+    {
+        _tprintf(L"[ERROR] CreateRemoteThread() failed!!! [%d]\n", GetLastError());
+        bRet = FALSE;
+        goto _ERROR;
+    }
+
     WaitForSingleObject(hThread, INFINITE);
 
+_ERROR:
+    if (pRemoteBuf)
+        VirtualFreeEx(hProcess, pRemoteBuf, 0, MEM_RELEASE);
     //同样，记得关闭句柄
-    CloseHandle(hThread);
-    CloseHandle(hProcess);
+    if(hThread)
+        CloseHandle(hThread);
+    if(hProcess)
+        CloseHandle(hProcess);
 
-    return TRUE;
+    return bRet;
 }
 
 int _tmain(int argc, TCHAR* argv[])
