@@ -1,0 +1,3 @@
+﻿  51_StAD_NtQIP.cpp
+E:\2_技术笔记汇总\回炉重造\4二进制\ReversecoreCode\51_StAD_NtQIP\51_StAD_NtQIP.cpp(72,12): warning C4477: “printf”: 格式字符串“%X”需要类型“unsigned int”的参数，但可变参数 1 拥有了类型“HANDLE”
+  51_StAD_NtQIP.vcxproj -> E:\2_技术笔记汇总\回炉重造\4二进制\ReversecoreCode\Debug\51_StAD_NtQIP.exe
